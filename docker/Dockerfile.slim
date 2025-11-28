@@ -1,0 +1,25 @@
+# Construimos desde una imagen builder para la generación de dependencias
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+COPY app/requirements.txt .
+
+# Instalamos las dependencias en una carpeta especifica /install
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# Construimos la imagen de runner para la etapa de ejecución
+FROM python:3.12-slim
+
+# Creamos un usuario no root
+RUN useradd -m myuser
+
+# Copiamos las dependencias creadas desde builder
+COPY --from=builder /install /usr/local
+
+WORKDIR /app
+COPY app/ .
+
+# Configuramos usuario, exponemos puerto y ejecutamos aplicación
+USER myuser
+EXPOSE 8080
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:app"]
