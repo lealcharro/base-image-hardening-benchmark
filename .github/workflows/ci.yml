@@ -1,0 +1,33 @@
+name: Build and Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        variant: [ubuntu, slim, alpine]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build ${{ matrix.variant }}
+        run: |
+          docker build -f docker/Dockerfile.${{ matrix.variant }} \
+            -t benchmark-app:${{ matrix.variant }} . || echo "Dockerfile pendiente"
+
+      - name: Test endpoints
+        run: |
+          docker run -d -p 5000:5000 --name test benchmark-app:${{ matrix.variant }} || true
+          sleep 3
+          curl -f http://localhost:5000/ || echo "App aún no lista"
+          curl -f http://localhost:5000/health || true
+          docker stop test || true

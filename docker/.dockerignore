@@ -1,0 +1,26 @@
+# Git
+.git
+
+# Documentación y configuración
+*.md
+docs/
+Makefile
+
+# Scripts y herramientas
+scripts/
+tools/
+docker/
+
+# Reportes generados
+reports/
+
+# Python cache y entornos virtuales
+__pycache__
+*.pyc
+*.pyo
+venv/
+.venv
+
+# IDEs
+.vscode/
+.idea/
