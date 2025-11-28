@@ -1,0 +1,16 @@
+FROM ubuntu:22.04
+
+RUN apt-get update && \
+    apt-get install -y python3-pip && \
+    apt-get clean
+
+COPY ./app /app
+WORKDIR /app
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN useradd -m myuser
+USER myuser
+
+EXPOSE 8080
+CMD ["python3", "-m", "gunicorn", "--bind", "0.0.0.0:8080", "main:app"]
