@@ -1,5 +1,5 @@
 # Construcción desde una imagen builder
-FROM python:3.12-alpine as builder
+FROM python:3.12-alpine AS builder
 
 # Instalamos herramientas de compilación críticas
 RUN apk add --no-cache build-base

@@ -10,7 +10,12 @@ GIT_SHA ?= $(shell git rev-parse --short HEAD)
 
 help: ## Muestra esta ayuda
 	@echo "Comandos disponibles:"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	@echo "  build           Construye las 3 variantes de imágenes Docker (ubuntu, slim, alpine)"
+	@echo "  inspect         Inspecciona y compara las 3 variantes de imágenes Docker"
+	@echo "  clean           Limpia contenedores, imágenes y reportes generados"
+	@echo "  run             Construye y ejecuta el contenedor (usa VARIANT=ubuntu|slim|alpine)"
+	@echo "  test            Ejecuta pruebas básicas de los endpoints"
+
 
 build: ## Construye las 3 variantes de imágenes Docker (ubuntu, slim, alpine)
 	@echo "Construyendo las 3 variantes de imágenes..."

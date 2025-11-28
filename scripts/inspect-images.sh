@@ -12,16 +12,12 @@ GIT_SHA=$(git rev-parse --short HEAD)
 VARIANTS=("ubuntu" "slim" "alpine")
 
 # Colores para mejor visualizacion
-BLUE='\033[0;34m'
-GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # Sin color
 
 echo ""
-echo "=========================================="
 echo "  INSPECCION DE IMAGENES DOCKER"
 echo "  Version: ${GIT_SHA}"
-echo "=========================================="
 echo ""
 
 # Funcion para obtener el tamaño de la imagen
