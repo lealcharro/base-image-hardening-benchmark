@@ -4,33 +4,37 @@
 IMAGE_NAME ?= base-image-hardening-benchmark
 TAG ?= latest
 CONTAINER_NAME ?= benchmark-app
-PORT ?= 5000
+PORT ?= 8080
+VARIANT ?= alpine
+GIT_SHA ?= $(shell git rev-parse --short HEAD)
 
 help: ## Muestra esta ayuda
 	@echo "Comandos disponibles:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-build: ## Construye la imagen Docker
-	@echo "Construyendo imagen $(IMAGE_NAME):$(TAG)..."
-	@echo "TODO: Implementar construcción de las 3 variantes (ubuntu, slim, alpine)"
-	@echo "Por ahora, este target está pendiente hasta que los Dockerfiles sean completados"
+build: ## Construye las 3 variantes de imágenes Docker (ubuntu, slim, alpine)
+	@echo "Construyendo las 3 variantes de imágenes..."
+	@./scripts/build-all.sh
 
-inspect: ## Inspecciona la imagen Docker construida
-	@echo "Inspeccionando imagen $(IMAGE_NAME):$(TAG)..."
-	@echo "TODO: Delegar a scripts/inspect-images.sh cuando esté implementado"
-	@docker image inspect $(IMAGE_NAME):$(TAG) 2>/dev/null || echo "Error: Imagen no encontrada. Ejecuta 'make build' primero."
+inspect: ## Inspecciona y compara las 3 variantes de imágenes Docker
+	@./scripts/inspect-images.sh
 
 clean: ## Limpia contenedores, imágenes y reportes generados
 	@echo "Limpiando recursos..."
 	@docker stop $(CONTAINER_NAME) 2>/dev/null || true
 	@docker rm $(CONTAINER_NAME) 2>/dev/null || true
-	@docker rmi $(IMAGE_NAME):$(TAG) 2>/dev/null || true
+	@docker rmi app-ubuntu:$(GIT_SHA) 2>/dev/null || true
+	@docker rmi app-slim:$(GIT_SHA) 2>/dev/null || true
+	@docker rmi app-alpine:$(GIT_SHA) 2>/dev/null || true
 	@rm -rf reports/*.json reports/*.html 2>/dev/null || true
 	@echo "Limpieza completada."
 
-run: build ## Construye y ejecuta el contenedor
-	@echo "Ejecutando contenedor $(CONTAINER_NAME)..."
-	@echo "TODO: Implementar cuando el Dockerfile esté completo"
+run: build ## Construye y ejecuta el contenedor (usa VARIANT=ubuntu|slim|alpine)
+	@echo "Ejecutando contenedor $(CONTAINER_NAME) con variante $(VARIANT)..."
+	@docker stop $(CONTAINER_NAME) 2>/dev/null || true
+	@docker rm $(CONTAINER_NAME) 2>/dev/null || true
+	@docker run -d --name $(CONTAINER_NAME) -p $(PORT):8080 app-$(VARIANT):$(GIT_SHA)
+	@echo "Contenedor ejecutándose en http://localhost:$(PORT)"
 
 test: ## Ejecuta pruebas básicas de los endpoints
 	@echo "Probando endpoint /..."
