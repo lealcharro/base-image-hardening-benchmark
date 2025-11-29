@@ -1,4 +1,4 @@
-.PHONY: help build inspect clean run test
+.PHONY: help build inspect clean run test scan sbom report check-cap
 
 # Variables
 IMAGE_NAME ?= base-image-hardening-benchmark
@@ -12,6 +12,9 @@ help: ## Muestra esta ayuda
 	@echo "Comandos disponibles:"
 	@echo "  build           Construye las 3 variantes de imágenes Docker (ubuntu, slim, alpine)"
 	@echo "  inspect         Inspecciona y compara las 3 variantes de imágenes Docker"
+	@echo "  scan            Ejecuta análisis de seguridad con Trivy en las imágenes"
+	@echo "  sbom            Genera Software Bill of Materials (SBOM) con Syft"
+	@echo "  report          Genera reporte completo de benchmark (scan + sbom + JSON)"
 	@echo "  clean           Limpia contenedores, imágenes y reportes generados"
 	@echo "  run             Construye y ejecuta el contenedor (usa VARIANT=ubuntu|slim|alpine)"
 	@echo "  test            Ejecuta pruebas básicas de los endpoints"
@@ -52,6 +55,16 @@ check-cap: ## Permite obtener las capabilities de cada una de las imágenes
 	@echo "Obteniendo capabilities de las imágenes..."
 	@./scripts/cap-check.sh
 
-report: build ## Genera el reporte de benchmark en formato JSON
-	@echo "Generando reporte de benchmark..."
+scan: build ## Ejecuta análisis de seguridad con Trivy en las imágenes
+	@echo "Ejecutando análisis de seguridad..."
+	@./scripts/scan-security.sh
+
+sbom: build ## Genera Software Bill of Materials (SBOM) con Syft
+	@echo "Generando SBOM..."
+	@./scripts/generate-sbom.sh
+
+report: scan sbom ## Genera reporte completo de benchmark (scan + sbom + JSON)
+	@echo "Generando reporte JSON de benchmark..."
 	@python3 tools/generate_report.py
+	@echo "Reporte completado. Revisa la carpeta 'reports/' para los resultados."
+	@ls -lh reports/ | grep -E "(security-scan|sbom|benchmark)" || true
