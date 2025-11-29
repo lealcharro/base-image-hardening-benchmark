@@ -169,4 +169,4 @@ make clean
 ## Videos
 
 - **Sprint 1**: https://drive.google.com/file/d/10CcC4_fwJP4LmTd209WLs2K8jIEm2BsA/view?usp=sharing
-- **Sprint 1**: TODO
+- **Sprint 2**: https://drive.google.com/file/d/1PU_OdjN8W-Qm7RBWQ36181TF7R7M2BT0/view?usp=sharing
