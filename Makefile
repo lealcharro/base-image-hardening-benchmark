@@ -15,6 +15,7 @@ help: ## Muestra esta ayuda
 	@echo "  clean           Limpia contenedores, imágenes y reportes generados"
 	@echo "  run             Construye y ejecuta el contenedor (usa VARIANT=ubuntu|slim|alpine)"
 	@echo "  test            Ejecuta pruebas básicas de los endpoints"
+	@echo "  check-cap       Permite obtener las capabilities de cada una de las imágenes"
 
 
 build: ## Construye las 3 variantes de imágenes Docker (ubuntu, slim, alpine)
@@ -46,3 +47,7 @@ test: ## Ejecuta pruebas básicas de los endpoints
 	@curl -s http://localhost:$(PORT)/ | jq '.' || echo "Error: Asegúrate de que el contenedor esté corriendo (make run)"
 	@echo "\nProbando endpoint /health..."
 	@curl -s http://localhost:$(PORT)/health | jq '.' || echo "Error: Asegúrate de que el contenedor esté corriendo (make run)"
+
+check-cap: ## Permite obtener las capabilities de cada una de las imágenes
+	@echo "Obteniendo capabilities de las imágenes..."
+	@./scripts/cap-check.sh
