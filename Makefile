@@ -16,7 +16,7 @@ help: ## Muestra esta ayuda
 	@echo "  run             Construye y ejecuta el contenedor (usa VARIANT=ubuntu|slim|alpine)"
 	@echo "  test            Ejecuta pruebas básicas de los endpoints"
 	@echo "  check-cap       Permite obtener las capabilities de cada una de las imágenes"
-
+	@echo "  report          Genera el reporte de benchmark en formato JSON"
 
 build: ## Construye las 3 variantes de imágenes Docker (ubuntu, slim, alpine)
 	@echo "Construyendo las 3 variantes de imágenes..."
@@ -32,7 +32,7 @@ clean: ## Limpia contenedores, imágenes y reportes generados
 	@docker rmi app-ubuntu:$(GIT_SHA) 2>/dev/null || true
 	@docker rmi app-slim:$(GIT_SHA) 2>/dev/null || true
 	@docker rmi app-alpine:$(GIT_SHA) 2>/dev/null || true
-	@rm -rf reports/*.json reports/*.html 2>/dev/null || true
+	@rm -rf reports/*.json 2>/dev/null || true
 	@echo "Limpieza completada."
 
 run: build ## Construye y ejecuta el contenedor (usa VARIANT=ubuntu|slim|alpine)
@@ -51,3 +51,7 @@ test: ## Ejecuta pruebas básicas de los endpoints
 check-cap: ## Permite obtener las capabilities de cada una de las imágenes
 	@echo "Obteniendo capabilities de las imágenes..."
 	@./scripts/cap-check.sh
+
+report: build ## Genera el reporte de benchmark en formato JSON
+	@echo "Generando reporte de benchmark..."
+	@python3 tools/generate_report.py
