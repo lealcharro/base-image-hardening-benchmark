@@ -12,6 +12,8 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 # Construcción de la imagen runner
 FROM python:3.12-alpine
 
+RUN apk add --no-cache libcap
+
 # Creación de un usuario no root
 RUN addgroup -S mygroup && adduser -S myuser -G mygroup
 

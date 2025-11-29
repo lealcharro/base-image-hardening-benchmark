@@ -10,6 +10,8 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 # Construimos la imagen de runner para la etapa de ejecución
 FROM python:3.12-slim
 
+RUN apt-get update && apt-get install -y libcap2-bin && apt-get clean
+
 # Creamos un usuario no root
 RUN useradd -m myuser
 
