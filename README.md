@@ -1,5 +1,9 @@
 # Benchmark de Hardening de Imágenes Base
 
+## Presentación
+
+Link del video: https://drive.google.com/file/d/15UYs8Mw-2O_FRDJRe3Afzay4gnuceW_8/view?usp=sharing
+
 ## Descripción
 
 Este proyecto es un benchmark de hardening para comparar imágenes base de Docker (`Ubuntu`, `Python Slim` y `Alpine`). La idea es empaquetar una misma aplicación web escrita en Python y Flask en estas tres variantes de imágenes para luego analizar y comparar sus pros y contras en términos de seguridad, tamaño y rendimiento.
