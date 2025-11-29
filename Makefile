@@ -14,7 +14,7 @@ help: ## Muestra esta ayuda
 	@echo "  inspect         Inspecciona y compara las 3 variantes de imágenes Docker"
 	@echo "  scan            Ejecuta análisis de seguridad con Trivy en las imágenes"
 	@echo "  sbom            Genera Software Bill of Materials (SBOM) con Syft"
-	@echo "  report          Ejecuta análisis de seguridad y genera SBOM (scan + sbom)"
+	@echo "  report          Genera reporte completo de benchmark (scan + sbom + JSON)"
 	@echo "  clean           Limpia contenedores, imágenes y reportes generados"
 	@echo "  run             Construye y ejecuta el contenedor (usa VARIANT=ubuntu|slim|alpine)"
 	@echo "  test            Ejecuta pruebas básicas de los endpoints"
@@ -63,6 +63,8 @@ sbom: build ## Genera Software Bill of Materials (SBOM) con Syft
 	@echo "Generando SBOM..."
 	@./scripts/generate-sbom.sh
 
-report: scan sbom ## Ejecuta análisis de seguridad y genera SBOM
-	@echo "Reportes completados. Revisa la carpeta 'reports/' para los resultados."
-	@ls -lh reports/ | grep -E "(security-scan|sbom)" || true
+report: scan sbom ## Genera reporte completo de benchmark (scan + sbom + JSON)
+	@echo "Generando reporte JSON de benchmark..."
+	@python3 tools/generate_report.py
+	@echo "Reporte completado. Revisa la carpeta 'reports/' para los resultados."
+	@ls -lh reports/ | grep -E "(security-scan|sbom|benchmark)" || true
