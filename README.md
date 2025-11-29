@@ -85,7 +85,49 @@ Con el contenedor en ejecución, se pueden probar los endpoints de la aplicació
 make test
 ```
 
-### 5. Limpiar
+### 5. Análisis de Seguridad
+
+Se puede ejecutar un análisis de seguridad automático en las imágenes generadas usando Trivy:
+
+```bash
+make scan
+```
+
+Este comando:
+- Construye las imágenes (si no existen)
+- Ejecuta un escaneo de seguridad en cada variante
+- Genera reportes JSON en la carpeta `reports/`
+- Soporta tanto Trivy instalado localmente como en Docker
+
+**Nota:** Si Trivy no está disponible, se genera un reporte simulado con fines de demostración.
+
+### 6. Generar Software Bill of Materials (SBOM)
+
+Se puede generar un SBOM para cada variante de imagen usando Syft:
+
+```bash
+make sbom
+```
+
+Este comando:
+- Construye las imágenes (si no existen)
+- Genera SBOM en formato JSON y SPDX para cada variante
+- Almacena los reportes en `reports/`
+- Soporta tanto Syft instalado localmente como en Docker
+
+**Nota:** Si Syft no está disponible, se genera un SBOM simulado con fines de demostración.
+
+### 7. Generar Reportes Completos
+
+Para ejecutar ambos análisis (seguridad y SBOM) en un solo comando:
+
+```bash
+make report
+```
+
+Este comando ejecuta `make scan` y `make sbom` en secuencia, generando un conjunto completo de reportes de seguridad y composición de software.
+
+### 8. Limpiar
 
 Para detener y eliminar los contenedores e imágenes generadas por el proyecto, se ejecuta:
 
@@ -93,6 +135,38 @@ Para detener y eliminar los contenedores e imágenes generadas por el proyecto, 
 make clean
 ```
 
+## Reproducibilidad
+
+El proyecto está diseñado para ser completamente reproducible. Para reproducir el flujo completo desde cero:
+
+```bash
+# 1. Clonar el repositorio
+git clone <repository-url>
+cd base-image-hardening-benchmark
+# 2. Construir las imágenes
+make build
+# 3. Inspeccionar las imágenes
+make inspect
+# 4. Generar reportes de seguridad y SBOM
+make report
+# 5. Ver resultados
+ls -lh reports/
+cat reports/security-scan-*.json | jq .
+cat reports/sbom-*.json | jq .
+# 6. Ejecutar y probar (opcional)
+make run VARIANT=alpine
+make test
+make clean
+```
+
+**Ventajas de esta estructura:**
+- Cada paso es independiente y reutilizable
+- Los reportes se almacenan con timestamp para histórico
+- Compatible con CI/CD (GitHub Actions)
+- No requiere dependencias adicionales (soporta ejecución vía Docker)
+- Facilita la auditoría y comparación de seguridad entre variantes
+
 ## Videos
 
 - **Sprint 1**: https://drive.google.com/file/d/10CcC4_fwJP4LmTd209WLs2K8jIEm2BsA/view?usp=sharing
+- **Sprint 1**: TODO
