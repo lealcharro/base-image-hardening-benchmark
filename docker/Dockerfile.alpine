@@ -1,0 +1,29 @@
+# Construcción desde una imagen builder
+FROM python:3.12-alpine AS builder
+
+# Instalamos herramientas de compilación críticas
+RUN apk add --no-cache build-base
+
+# Instalamos dependencias de Python en una carpeta específica /install
+WORKDIR /app
+COPY app/requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# Construcción de la imagen runner
+FROM python:3.12-alpine
+
+RUN apk add --no-cache libcap
+
+# Creación de un usuario no root
+RUN addgroup -S mygroup && adduser -S myuser -G mygroup
+
+# Copiamos las dependencias de la imagen builder al runner
+COPY --from=builder /install /usr/local
+
+WORKDIR /app
+COPY app/ .
+
+# Configuramos al usuario, exponemos puerto y ejecutamos la aplicación
+USER myuser
+EXPOSE 8080
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:app"]
